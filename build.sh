@@ -6,4 +6,4 @@ git submodule update
 mkdir -p build/googletest
 cd build/googletest
 cmake ../../googletest
-
+make

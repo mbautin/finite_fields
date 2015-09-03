@@ -21,6 +21,11 @@ public:
     coef.push_back(scalar);
   }
 
+  Polynomial(const vector<F> & elements)
+    : coef(elements) {
+  }
+
+
   Polynomial(vector<F> && elements)
     : coef(elements) {
   }
@@ -31,7 +36,7 @@ public:
   template<typename>
   friend Polynomial operator +(const Polynomial<F>&, const Polynomial<F>&);
 
-  F get_coef(size_t i) {
+  F get_coef(size_t i) const {
     if (i < coef.size()) {
       return coef[i];
     } else {
@@ -39,7 +44,7 @@ public:
     }
   }
 
-  bool is_zero() {
+  bool is_zero() const {
     for (auto c : coef) {
       if (c != 0)
         return false;
@@ -47,8 +52,16 @@ public:
     return true;
   }
 
-  int degree() {
-    return ((int) coef.size()) - 1;
+  int degree() const {
+    return ((int) effective_size()) - 1;
+  }
+
+  size_t effective_size() const {
+    size_t s = coef.size();
+    while (s > 0 && coef[s - 1] == 0) {
+      s--;
+    }
+    return s;
   }
 
 
@@ -94,6 +107,22 @@ Polynomial<F> operator - (const Polynomial<F>& a, const Polynomial<F>& b) {
 
 }
 
+template<typename F>
+bool operator == (const Polynomial<F>& a, const Polynomial<F>& b) {
+  size_t a_size = a.effective_size();
+  size_t b_size = b.effective_size();
+  if (a_size != b_size) {
+    return false;
+  }
+
+  for (size_t i = 0; i < a_size; ++i) {
+    if (a.get_coef(i) != b.get_coef(i)) {
+      return false;
+    }
+  }
+
+  return true;
+}
 
 };
 
