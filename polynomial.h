@@ -5,11 +5,15 @@
 
 #include <algorithm>
 #include <vector>
+#include <sstream>
+#include <ostream>
 
 namespace FF {
 
 using std::max;
 using std::vector;
+using std::string;
+using std::ostringstream;
 
 template <typename F>
 class Polynomial {
@@ -64,6 +68,45 @@ public:
     return s;
   }
 
+  string str(const string& variable_name = "x") const {
+    if (is_zero()) {
+      return "0";
+    }
+    ostringstream ss;
+    bool output_produced = false;
+    for (int i = degree(); i >= 0; --i) {
+      auto c = coef[i];
+      if (c == 0) continue;
+
+      if (c > 0) {
+        if (output_produced) {
+          ss << " + ";
+        }
+      } else {
+        if (output_produced) {
+          ss << " - ";
+        } else {
+          ss << "-";
+        }
+      }
+      output_produced = true;
+
+      if (abs(c) != 1 || i == 0) {
+        ss << abs(c);
+        if (i > 0) {
+          ss << "*";
+        }
+      }
+
+      if (i > 0) {
+        ss << variable_name;
+        if (i > 1) {
+          ss << "^" << i;
+        }
+      }
+    }
+    return ss.str();
+  }
 
 private:
   vector<F> coef;
